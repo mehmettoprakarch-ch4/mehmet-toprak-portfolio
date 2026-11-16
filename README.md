@@ -17,4 +17,4 @@ Proje sayfalarında kapak, kısa bilgiler, plan, kesit, detay ve süreç paftala
 
 İmleç mimari hedef işaretini, kısa turuncu çizim izini ve ekranı izleyen X/Y kılavuzlarını taşır; görsel alanlarda yüzde cinsinden ölçü notları gösterir. Fareyle boş bir alana veya büyütülmüş paftaya çift tıklayıp ikinci tıklamayı basılı tutarak sürüklemek geçici, şeffaf turuncu bir ölçü dikdörtgeni çizer. Dikdörtgen fare bırakıldıktan kısa süre sonra silinir; kaydedilmez. İmleç ve hareketler `prefers-reduced-motion` ayarına uyar; dokunmatik cihazlarda özel imleç kapalıdır. Harici sunucu, hesap veya paket kurulumu gerekmez.
 
-`proje-01.html`, `proje-02.html` ve `proje-03.html` eski bağlantılar için ilk üç projenin kopyalarıdır. Yazı tipleri Archivo ve IBM Plex Mono'dur; internet erişimi olmadığında yerel yedek fontlar kullanılır.
+Ana sayfadaki proje görselleri aşağı kaydırıldıkça kağıt gibi buruşup top olur (`paper-balls.js`); toplar sürüklenip fırlatılabilir, çift tıklanınca projeyi açar. Yazı tipleri Archivo ve IBM Plex Mono'dur; internet erişimi olmadığında yerel yedek fontlar kullanılır.
