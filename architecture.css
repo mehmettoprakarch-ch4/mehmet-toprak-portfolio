@@ -134,11 +134,14 @@ dialog#lightbox::backdrop{background:#171914ed}
   #cursor-trail,.architecture-cursor,.coordinate-guides,.draft-selection.is-visible{display:block!important}
 }
 
-/* Kağıt topları (paper-balls.js) */
-.paper-layer{position:fixed;left:0;top:0;z-index:950;pointer-events:none}
-.work-card.is-paper .work-image{background:transparent!important;outline:1px dashed rgba(40,40,40,.28);outline-offset:-1px}
-.work-card.is-paper .work-image>*{visibility:hidden}
-.work-card.is-paper .work-caption{transition:none}
-html.over-paper-ball body:not(.has-custom-cursor){cursor:grab}
-html.is-dragging-paper body:not(.has-custom-cursor),html.is-dragging-paper body:not(.has-custom-cursor) *{cursor:grabbing!important}
-html.is-dragging-paper *{user-select:none;-webkit-user-select:none}
+/* Pafta katlama (pafta-katlama.js) */
+.fold-layer{position:absolute;inset:0;display:none;perspective:1500px;perspective-origin:50% 45%;pointer-events:none;transform-origin:50% 50%}
+.fold-panel{position:absolute;left:0;top:0;overflow:hidden;transform-origin:0 50%;backface-visibility:hidden;will-change:transform}
+.fold-panel>img{position:absolute;max-width:none}
+.fold-panel::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(40,40,40,.25),#282828);opacity:var(--shade,0);pointer-events:none}
+.fold-panel:nth-child(even)::after{background:linear-gradient(90deg,#282828,rgba(40,40,40,0) 70%)}
+.fold-panel+.fold-panel{box-shadow:inset 1px 0 0 rgba(40,40,40,.28)}
+.fold-stamp{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%) rotate(-4deg);padding:7px 9px 6px;border:1px solid var(--accent,#fa3600);background:var(--paper,#f3f3ec);color:var(--accent,#fa3600);font:500 9px/1.45 var(--mono,monospace);letter-spacing:.08em;text-align:center;white-space:nowrap;opacity:0}
+.work-card.is-folding .work-image{background:transparent!important;outline:1px dashed rgba(40,40,40,.3);outline-offset:-1px}
+.work-card.is-folding .work-image>:not(.fold-layer){visibility:hidden}
+.work-card.is-folding .fold-layer{display:block}
