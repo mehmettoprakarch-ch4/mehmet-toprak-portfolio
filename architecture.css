@@ -133,3 +133,12 @@ dialog#lightbox::backdrop{background:#171914ed}
 @media(max-width:600px) and (pointer:fine) and (hover:hover) and (prefers-reduced-motion:no-preference){
   #cursor-trail,.architecture-cursor,.coordinate-guides,.draft-selection.is-visible{display:block!important}
 }
+
+/* Kağıt topları (paper-balls.js) */
+.paper-layer{position:fixed;left:0;top:0;z-index:950;pointer-events:none}
+.work-card.is-paper .work-image{background:transparent!important;outline:1px dashed rgba(40,40,40,.28);outline-offset:-1px}
+.work-card.is-paper .work-image>*{visibility:hidden}
+.work-card.is-paper .work-caption{transition:none}
+html.over-paper-ball body:not(.has-custom-cursor){cursor:grab}
+html.is-dragging-paper body:not(.has-custom-cursor),html.is-dragging-paper body:not(.has-custom-cursor) *{cursor:grabbing!important}
+html.is-dragging-paper *{user-select:none;-webkit-user-select:none}
