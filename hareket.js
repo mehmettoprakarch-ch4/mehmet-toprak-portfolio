@@ -301,12 +301,54 @@
     addEventListener('touchcancel', end, { passive: true });
   }
 
+  // ---------- 7) Kot göstergesi: sayfa derinliği bir kesitteki kot gibi okunur (1 px = 1 cm) ----------
+  const kot = document.createElement('div');
+  kot.className = 'kot-rail';
+  kot.setAttribute('aria-hidden', 'true');
+  kot.innerHTML = '<span class="kot-zero">±0.00</span><div class="kot-mark"><i></i><span>KOT</span><b>±0.00</b></div><small>1 PX = 1 CM</small>';
+  document.body.append(kot);
+  const kotValue = kot.querySelector('b');
+  let kotLast = -1;
+  function paintKot() {
+    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    const y = clamp(scrollY, 0, max);
+    if (y === kotLast) return;
+    const first = !kotReady;
+    kotReady = true;
+    kotLast = y;
+    kot.style.setProperty('--p', (y / max).toFixed(4));
+    kotValue.textContent = y < 1 ? '±0.00' : `−${(y / 100).toFixed(2)}`;
+    // Dar ekranlarda gösterge yalnızca kaydırırken köşede belirir.
+    if (first) return;
+    kot.classList.add('is-scrolling');
+    clearTimeout(kotTimer);
+    kotTimer = setTimeout(() => kot.classList.remove('is-scrolling'), 1100);
+  }
+  let kotTimer = 0, kotReady = false;
+
+  // ---------- 8) Proje sayfalarında kaydırdıkça dönen kuzey oku ve ölçek çubuğu ----------
+  let north = null;
+  if (document.querySelector('.project-page')) {
+    north = document.createElement('div');
+    north.className = 'north-arrow';
+    north.setAttribute('aria-hidden', 'true');
+    north.innerHTML = '<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="21"/><path class="needle" d="M30 7 36 31 30 27 24 31Z"/><path d="M30 53V40"/><text x="30" y="47" text-anchor="middle">K</text></svg>' +
+      '<span class="north-scale"><i></i><em>0</em><em>5</em><em>10 M</em></span>';
+    document.body.append(north);
+  }
+  function paintNorth() {
+    if (!north) return;
+    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    north.style.setProperty('--turn', `${(-18 + clamp(scrollY / max, 0, 1) * 36).toFixed(2)}deg`);
+  }
+
   // ---------- Kaydırma döngüsü ----------
   let pending = false;
-  function frame() { pending = false; const vh = innerHeight; paintTopo(vh); paintWords(vh); }
+  function frame() { pending = false; const vh = innerHeight; paintTopo(vh); paintWords(vh); paintKot(); paintNorth(); }
   const schedule = () => { if (!pending) { pending = true; requestAnimationFrame(frame); } };
   addEventListener('scroll', () => { schedule(); kickMarquee(); }, { passive: true });
-  addEventListener('resize', () => { topoSections.forEach(t => { t.last = -1; }); readers.forEach(r => { r.lit = -1; }); schedule(); }, { passive: true });
+  addEventListener('resize', () => { topoSections.forEach(t => { t.last = -1; }); readers.forEach(r => { r.lit = -1; }); kotLast = -1; schedule(); }, { passive: true });
+  addEventListener('load', () => { kotLast = -1; schedule(); });
 
   intro();
   schedule();

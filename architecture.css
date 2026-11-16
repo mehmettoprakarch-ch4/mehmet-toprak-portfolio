@@ -215,3 +215,53 @@ img.focus-reveal.is-focused{filter:none}
 .touch-readout{position:absolute;left:50%;bottom:calc(100% + 26px);transform:translateX(-50%);padding:4px 7px;background:#f3f3ec;border:1px solid #fa3600;color:#fa3600;font:500 9px var(--mono,monospace);letter-spacing:.05em;white-space:nowrap}
 @media (pointer:fine) and (hover:hover){.touch-tools{display:none}}.touch-tools.near-top .touch-readout{bottom:auto;top:calc(100% + 26px)}
 html.touch-cursor-on .hero-art-color{clip-path:circle(var(--reveal-radius,0px) at var(--pointer-x,50%) var(--pointer-y,50%));transition:clip-path .25s ease-out}
+
+/* Kot göstergesi: masaüstünde sağ kenar boşluğunda (hareket.js) */
+.kot-rail{position:fixed;top:20vh;height:60vh;left:calc(75% + 320px);width:1px;z-index:40;pointer-events:none;display:none;background:rgba(40,40,40,.35);font:500 9px/1.3 var(--mono,monospace);letter-spacing:.05em;color:#282828}
+.kot-rail::before{content:"";position:absolute;left:-4px;top:0;bottom:0;width:9px;background:repeating-linear-gradient(to bottom,rgba(40,40,40,.4) 0 1px,transparent 1px 10%)}
+.kot-zero{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);opacity:.5;white-space:nowrap}
+.kot-rail small{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%);font:inherit;font-size:7px;opacity:.45;white-space:nowrap}
+.kot-mark{position:absolute;left:0;top:calc(var(--p,0) * 100%);display:grid;justify-items:center;transform:translate(-50%,-2px);text-align:center;white-space:nowrap}
+.kot-mark i{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid #fa3600}
+.kot-mark span{margin-top:4px;font-size:7px;color:#fa3600}
+.kot-mark b{font-weight:600;padding:1px 3px;background:#e8e8df}
+@media (min-width:1200px){.kot-rail{display:block}}
+@media (max-width:1199px){
+  .kot-rail{display:block;top:auto;bottom:14px;left:auto;right:14px;height:auto;width:auto;background:none;opacity:0;transition:opacity .4s ease}
+  .kot-rail.is-scrolling{opacity:1;transition-duration:.15s}
+  .kot-rail::before,.kot-zero,.kot-rail small{display:none}
+  .kot-mark{position:static;display:flex;align-items:center;gap:5px;transform:none;padding:5px 7px;background:rgba(243,243,236,.92);border:1px solid rgba(40,40,40,.18)}
+  .kot-mark span{margin:0}
+  .kot-mark b{background:none;padding:0}
+}
+
+/* Kuzey oku ve ölçek çubuğu: proje sayfalarında (hareket.js) */
+.north-arrow{position:fixed;z-index:40;left:14px;bottom:14px;width:46px;pointer-events:none;color:#282828}
+.north-arrow svg{display:block;width:46px;height:46px;transform:rotate(var(--turn,0deg));transition:transform .25s ease-out;border-radius:50%;background:rgba(243,243,236,.88)}
+.north-arrow circle,.north-arrow path{fill:none;stroke:currentColor;stroke-width:1}
+.north-arrow .needle{fill:#fa3600;stroke:#fa3600}
+.north-arrow text{font:600 8px var(--mono,monospace);fill:currentColor}
+.north-scale{display:none}
+@media (min-width:1200px){
+  .north-arrow{left:calc(25% - 320px);bottom:9vh;width:60px;transform:translateX(-50%)}
+  .north-arrow svg{width:60px;height:60px;background:none}
+  .north-scale{display:grid;grid-template-columns:auto auto auto;justify-content:space-between;position:relative;margin-top:14px;padding-top:7px;font:500 7px var(--mono,monospace);letter-spacing:.04em}
+  .north-scale i{position:absolute;left:0;right:0;top:0;height:4px;border:1px solid currentColor;background:linear-gradient(90deg,currentColor 0 25%,transparent 25% 50%,currentColor 50% 75%,transparent 75%)}
+  .north-scale em{font-style:normal}
+}
+
+/* Kesitli sayfa geçişi: ayrılırken A—A kesit çizgisi çekilir, iki yarı kapanır; yeni sayfa ortadan açılır */
+.line-transition:before,.line-transition:after{content:"";position:absolute;left:0;right:0;height:50%;background:var(--paper,#f3f3ec);transform:scaleY(0);animation:none}
+.line-transition:before{top:0;transform-origin:top}
+.line-transition:after{bottom:0;transform-origin:bottom}
+.line-transition span{display:none}
+.line-transition span:nth-child(2){display:block;z-index:2;top:50%;height:1px;background:var(--accent,#fa3600)}
+.line-transition span:nth-child(2)::after{content:"A — A   KESİT";position:absolute;left:clamp(20px,4vw,56px);bottom:8px;font:500 9px var(--mono,monospace);letter-spacing:.08em;color:var(--accent,#fa3600);white-space:pre}
+.is-transitioning .line-transition:before,.is-transitioning .line-transition:after{animation:kesit-close .28s cubic-bezier(.7,0,.2,1) .14s both}
+.is-transitioning .line-transition span:nth-child(2){animation:transition-draw .2s cubic-bezier(.6,0,.2,1) both}
+@keyframes kesit-close{to{transform:scaleY(1)}}
+::view-transition-group(root){animation-duration:.7s}
+::view-transition-old(root){animation:none}
+::view-transition-new(root){animation:kesit-open .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes kesit-open{from{clip-path:inset(50% 0 50% 0)}to{clip-path:inset(0)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none!important}}
