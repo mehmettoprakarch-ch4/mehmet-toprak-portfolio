@@ -220,6 +220,87 @@
     focusTargets.forEach(img => io.observe(img));
   }
 
+  // ---------- 6) Mobilde parmak imleç olur ----------
+  // Masaüstündeki mimari imlecin dokunmatik karşılığı: parmağın altında artı işareti, ekranı kesen
+  // kesikli X/Y kılavuzları, kısa turuncu iz ve ölçü notu. Ana sayfadaki çizimde parmak plan katmanını açar.
+  // Dinleyiciler pasiftir; kaydırma hiç engellenmez.
+  if (!matchMedia('(pointer:fine) and (hover:hover)').matches && 'ontouchstart' in window) {
+    const tools = document.createElement('div');
+    tools.className = 'touch-tools';
+    tools.setAttribute('aria-hidden', 'true');
+    tools.innerHTML = '<canvas class="touch-trail"></canvas><span class="touch-guide-x"></span><span class="touch-guide-y"></span>' +
+      '<div class="touch-cursor"><i></i><b></b><span class="touch-readout"></span></div>';
+    document.body.append(tools);
+    const canvas = tools.querySelector('canvas'), ctx = canvas.getContext('2d');
+    const readout = tools.querySelector('.touch-readout');
+    const heroArt = document.querySelector('.hero-art');
+    const hint = document.querySelector('.hero-hint');
+    if (hint && hint.lastChild) hint.lastChild.textContent = 'ÇİZİMİN ÜZERİNDE PARMAĞINI GEZDİR / RENKLERİ AÇ';
+    root.classList.add('touch-cursor-on');
+    let points = [], finger = null, hideTimer = 0, drawing = 0, dpr = 1;
+    const fit = () => { dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr; };
+    fit(); addEventListener('resize', fit, { passive: true });
+
+    function draw(now) {
+      drawing = 0;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      points = points.filter(p => now - p.t < 650);
+      ctx.lineCap = 'round';
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1], b = points[i], alpha = Math.max(0, 1 - (now - b.t) / 650);
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.lineWidth = 1.6 + alpha; ctx.strokeStyle = `rgba(250,54,0,${(alpha * 0.8).toFixed(3)})`; ctx.stroke();
+      }
+      if (finger) {
+        tools.style.setProperty('--x', `${finger.x}px`);
+        tools.style.setProperty('--y', `${finger.y}px`);
+      }
+      if (points.length > 1 || finger) drawing = requestAnimationFrame(draw);
+    }
+    function measure(x, y, target) {
+      const frame = target && target.closest?.('.hero-art,.work-image,.zoom-image,.story-row figure,.drawing-grid figure');
+      if (frame) {
+        const r = frame.getBoundingClientRect();
+        const px = clamp(Math.round((x - r.left) / r.width * 100), 0, 100), py = clamp(Math.round((y - r.top) / r.height * 100), 0, 100);
+        return `X ${String(px).padStart(2, '0')}% · Y ${String(py).padStart(2, '0')}%`;
+      }
+      return `X ${String(Math.round(x)).padStart(3, '0')} · Y ${String(Math.round(y)).padStart(3, '0')}`;
+    }
+    function move(event) {
+      const t = event.touches[0];
+      if (!t || event.touches.length > 1) return;
+      clearTimeout(hideTimer);
+      finger = { x: t.clientX, y: t.clientY };
+      points.push({ x: t.clientX, y: t.clientY, t: performance.now() });
+      if (points.length > 40) points.shift();
+      readout.textContent = measure(t.clientX, t.clientY, document.elementFromPoint(t.clientX, t.clientY));
+      tools.classList.add('is-active');
+      tools.classList.toggle('near-top', t.clientY < 110);
+      if (heroArt) {
+        const r = heroArt.getBoundingClientRect();
+        const inside = t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom;
+        heroArt.style.setProperty('--pointer-x', `${t.clientX - r.left}px`);
+        heroArt.style.setProperty('--pointer-y', `${t.clientY - r.top}px`);
+        heroArt.style.setProperty('--reveal-radius', inside ? '84px' : '0px');
+        heroArt.style.setProperty('--plan-radius', inside ? '150px' : '0px');
+      }
+      if (!drawing) drawing = requestAnimationFrame(draw);
+    }
+    function end(event) {
+      if (event.touches.length) return;
+      finger = null;
+      hideTimer = setTimeout(() => tools.classList.remove('is-active'), 650);
+      heroArt?.style.setProperty('--plan-radius', '0px');
+      heroArt?.style.setProperty('--reveal-radius', '0px');
+      if (!drawing) drawing = requestAnimationFrame(draw);
+    }
+    addEventListener('touchstart', move, { passive: true });
+    addEventListener('touchmove', move, { passive: true });
+    addEventListener('touchend', end, { passive: true });
+    addEventListener('touchcancel', end, { passive: true });
+  }
+
   // ---------- Kaydırma döngüsü ----------
   let pending = false;
   function frame() { pending = false; const vh = innerHeight; paintTopo(vh); paintWords(vh); }

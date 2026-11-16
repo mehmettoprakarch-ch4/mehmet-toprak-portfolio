@@ -200,3 +200,18 @@ html.intro-pending body>*:not(.intro){visibility:hidden}
 img.focus-reveal{filter:blur(14px) grayscale(.6);transition:filter 1.15s cubic-bezier(.2,.7,.2,1)}
 img.focus-reveal.is-focused{filter:none}
 @media (prefers-reduced-motion:reduce){img.focus-reveal{filter:none}.word{opacity:1}}
+/* Mobilde parmak imleci (hareket.js) */
+.touch-tools{position:fixed;inset:0;z-index:1002;pointer-events:none;opacity:0;transition:opacity .35s ease}
+.touch-tools.is-active{opacity:1;transition-duration:.12s}
+.touch-trail{position:absolute;inset:0;width:100%;height:100%}
+.touch-guide-x,.touch-guide-y{position:absolute;display:block}
+.touch-guide-x{top:0;bottom:0;left:var(--x,50%);width:1px;background:repeating-linear-gradient(to bottom,#fa360080 0 5px,transparent 5px 11px)}
+.touch-guide-y{left:0;right:0;top:var(--y,50%);height:1px;background:repeating-linear-gradient(to right,#fa360080 0 5px,transparent 5px 11px)}
+.touch-cursor{position:absolute;left:var(--x,50%);top:var(--y,50%);width:64px;height:64px;transform:translate(-50%,-50%);color:#fa3600}
+.touch-cursor i,.touch-cursor b{position:absolute;background:currentColor}
+.touch-cursor i{left:0;right:0;top:50%;height:1px}
+.touch-cursor b{top:0;bottom:0;left:50%;width:1px}
+.touch-cursor::after{content:"";position:absolute;inset:14px;border:1px solid currentColor;border-radius:50%}
+.touch-readout{position:absolute;left:50%;bottom:calc(100% + 26px);transform:translateX(-50%);padding:4px 7px;background:#f3f3ec;border:1px solid #fa3600;color:#fa3600;font:500 9px var(--mono,monospace);letter-spacing:.05em;white-space:nowrap}
+@media (pointer:fine) and (hover:hover){.touch-tools{display:none}}.touch-tools.near-top .touch-readout{bottom:auto;top:calc(100% + 26px)}
+html.touch-cursor-on .hero-art-color{clip-path:circle(var(--reveal-radius,0px) at var(--pointer-x,50%) var(--pointer-y,50%));transition:clip-path .25s ease-out}
