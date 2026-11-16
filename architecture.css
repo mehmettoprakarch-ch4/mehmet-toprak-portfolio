@@ -134,14 +134,10 @@ dialog#lightbox::backdrop{background:#171914ed}
   #cursor-trail,.architecture-cursor,.coordinate-guides,.draft-selection.is-visible{display:block!important}
 }
 
-/* Pafta katlama (pafta-katlama.js) */
-.fold-layer{position:absolute;inset:0;display:none;perspective:1500px;perspective-origin:50% 45%;pointer-events:none;transform-origin:50% 50%}
-.fold-panel{position:absolute;left:0;top:0;overflow:hidden;transform-origin:0 50%;backface-visibility:hidden;will-change:transform}
-.fold-panel>img{position:absolute;max-width:none}
-.fold-panel::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(40,40,40,.25),#282828);opacity:var(--shade,0);pointer-events:none}
-.fold-panel:nth-child(even)::after{background:linear-gradient(90deg,#282828,rgba(40,40,40,0) 70%)}
-.fold-panel+.fold-panel{box-shadow:inset 1px 0 0 rgba(40,40,40,.28)}
-.fold-stamp{position:absolute;left:50%;top:50%;z-index:2;transform:translate(-50%,-50%) rotate(-4deg);padding:7px 9px 6px;border:1px solid var(--accent,#fa3600);background:var(--paper,#f3f3ec);color:var(--accent,#fa3600);font:500 9px/1.45 var(--mono,monospace);letter-spacing:.08em;text-align:center;white-space:nowrap;opacity:0}
-.work-card.is-folding .work-image{background:transparent!important;outline:1px dashed rgba(40,40,40,.3);outline-offset:-1px}
-.work-card.is-folding .work-image>:not(.fold-layer){visibility:hidden}
-.work-card.is-folding .fold-layer{display:block}
+/* Masaüstünde sayfa, masaya konmuş bir pafta gibi ortalanır; kenarlarda boşluk kalır */
+@media (min-width:1200px){
+  html{background:#e8e8df}
+  body{max-width:1280px;margin-inline:auto;background:#f3f3ec;box-shadow:0 0 0 1px rgba(40,40,40,.09),0 30px 80px rgba(40,40,40,.06)}
+  .hero h1{font-size:clamp(76px,16.6vw,218px)}
+}
+@media (max-width:400px){.hero-side-note{display:none}}
